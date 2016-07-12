@@ -1,5 +1,7 @@
 # Physical
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/alde/physical)](https://goreportcard.com/report/github.com/alde/physical)
+
 Health Checks for Go
 Compatible with DropWizard-style health checks
 
