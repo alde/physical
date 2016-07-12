@@ -13,6 +13,7 @@ type healthCheck struct {
 
 var healthChecks []*healthCheck
 
+// Convenience constants
 const (
 	SeverityCritical = "CRITICAL"
 	SeverityWarning  = "WARNING"
@@ -39,6 +40,8 @@ type HealthCheckResponse struct {
 	Link           string                 `json:"link,omitempty"`
 }
 
+// The Dependency struct holds the name of an upstream service that the health
+// check depends on for it's status.
 type Dependency struct {
 	Name string `json:"service_name,omitempty"`
 }
@@ -83,8 +86,8 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func performChecks() ([]HealthCheckResponse, []HealthCheckResponse) {
-	healthy := make([]HealthCheckResponse, 0)
-	unhealthy := make([]HealthCheckResponse, 0)
+	healthy := []HealthCheckResponse{}
+	unhealthy := []HealthCheckResponse{}
 
 	for _, hc := range healthChecks {
 		h := hc.fun()
