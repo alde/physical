@@ -3,6 +3,7 @@ package physical
 import (
 	"encoding/json"
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/mux"
 )
@@ -87,9 +88,20 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 func performChecks() ([]HealthCheckResponse, []HealthCheckResponse) {
 	healthy := []HealthCheckResponse{}
 	unhealthy := []HealthCheckResponse{}
+	wg := sync.WaitGroup{}
+	checks := make(chan HealthCheckResponse, len(healthChecks))
 
 	for _, hc := range healthChecks {
-		h := hc.fun()
+		wg.Add(1)
+		go func(hc *healthCheck) {
+			defer wg.Done()
+			checks <- hc.fun()
+		}(hc)
+	}
+
+	wg.Wait()
+	close(checks)
+	for h := range checks {
 		if h.Healthy {
 			healthy = append(healthy, h)
 		} else {
