@@ -75,14 +75,13 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 		Healthy:   healthy,
 		Unhealthy: unhealthy,
 	}
+	w.Header().Set("Content-Type", "application/json")
 	body, err := json.Marshal(hcr)
-
 	if err != nil || len(unhealthy) > 0 {
 		w.WriteHeader(http.StatusInternalServerError)
 	} else {
 		w.WriteHeader(http.StatusOK)
 	}
-
 	w.Write(body)
 }
 
